@@ -33,8 +33,9 @@ class UserController extends Controller
         if (count($username) > 1) {
             $genarateName .= $username[1];
         }
+        $user_sponser_name = strtolower($genarateName . random_int(0, 999));
 
-        $newUser->user_name = strtolower($genarateName . random_int(0, 999));
+        $newUser->user_name = $user_sponser_name;
         $newUser->email = $request->email;
         $newUser->phone = $request->phone;
         $newUser->sponserId = $request->sponserId;
@@ -42,22 +43,23 @@ class UserController extends Controller
         // This is for server 
         // $newUser->referral_link = env('APP_URL') . "/user/register/?sopnser=" . strtolower($genarateName . random_int(0, 999));
         // This is for local testing
-        $newUser->referral_link = "http://127.0.0.1:5173/user/register/?sopnser=" . strtolower($genarateName . random_int(0, 999));
+        $newUser->referral_link = "http://127.0.0.1:5173/user/register/?sopnser=" . $user_sponser_name;
 
         // we are checking sponserId is valid or not
-        $refferlLinkValidate = User::where("sponserId", $request->sponserId)->first();
+        $refferlLinkValidate = User::where("user_name", $request->sponserId)->get();
 
-        if ($refferlLinkValidate) {
+        if (count($refferlLinkValidate) != 0) {
+
             $newUser->save();
             return response()->json([
                 "status" => 'pass',
-                "message" => "Login Successfully",
+                "message" => " $user_sponser_name,$refferlLinkValidate Login Successfully",
                 "data" => $newUser,
             ]);
         } else {
             return response()->json([
                 "status" => 'faild',
-                "message" => " আপনার SponserID সঠিক নয়!",
+                "message" => "আপনার SponserID সঠিক নয়!",
             ]);
         }
     }
