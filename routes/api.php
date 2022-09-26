@@ -16,18 +16,17 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::middleware('auth:sanctum')->get('/test', function (Request $request) {
+    return "This is a protected route";
 });
 
-Route::get("test", function () {
-    return "working";
-});
+
 
 // This route for users 
 Route::prefix("user")->group(function () {
-    Route::post('/register', [UserController::class, 'userRegister']);
-    Route::post('/login', [UserController::class, 'userLogin']);
+    Route::post('/register', [UserController::class, 'userRegister'])->name('user.register');
+    Route::post('/login', [UserController::class, 'userLogin'])->name('user.login');
+    Route::post('/logout', [UserController::class, 'userLogout'])->name('name.logout')->middleware('auth:sanctum');
 });
 
 // This is route for admin 

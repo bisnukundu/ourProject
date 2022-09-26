@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Str;
 
 class UserController extends Controller
 {
@@ -61,5 +63,17 @@ class UserController extends Controller
                 "message" => "Username or Password wrong..."
             ]);
         }
+    }
+
+    function userLogout()
+    {
+        $tokenId = Str::before(request()->bearerToken(), '|');
+
+        Auth::user()->tokens()->where('id', $tokenId)->delete();
+
+        return response()->json([
+            "status" => "success",
+            "message" => Auth::id() . "Logout Successfully..."
+        ]);
     }
 }
