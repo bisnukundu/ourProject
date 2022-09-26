@@ -39,12 +39,27 @@ class UserController extends Controller
         $newUser->phone = $request->phone;
         $newUser->sponserId = $request->sponserId;
         $newUser->password = Hash::make($request->password);
-        $newUser->save();
-        return response()->json([
-            "status" => 'pass',
-            "message" => "Login Successfully",
-            "data" => $newUser,
-        ]);
+        // This is for server 
+        // $newUser->referral_link = env('APP_URL') . "/user/register/?sopnser=" . strtolower($genarateName . random_int(0, 999));
+        // This is for local testing
+        $newUser->referral_link = "http://127.0.0.1:5173/user/register/?sopnser=" . strtolower($genarateName . random_int(0, 999));
+
+        // we are checking sponserId is valid or not
+        $refferlLinkValidate = User::where("sponserId", $request->sponserId)->first();
+
+        if ($refferlLinkValidate) {
+            $newUser->save();
+            return response()->json([
+                "status" => 'pass',
+                "message" => "Login Successfully",
+                "data" => $newUser,
+            ]);
+        } else {
+            return response()->json([
+                "status" => 'faild',
+                "message" => " আপনার SponserID সঠিক নয়!",
+            ]);
+        }
     }
 
     function userLogin(Request $request)
@@ -56,7 +71,7 @@ class UserController extends Controller
         $user = User::where('user_name', $request->user_name)->first();
         if ($user && Hash::check($request->password, $user->password)) {
             $token = $user->createToken('userLogin');
-            return $token;
+            return [$token, $user];
         } else {
             return response()->json([
                 "status" => "faild",
