@@ -26,7 +26,8 @@ Route::middleware('auth:sanctum')->get('/test', function (Request $request) {
 Route::prefix("user")->group(function () {
     Route::post('/register', [UserController::class, 'userRegister'])->name('user.register');
     Route::post('/login', [UserController::class, 'userLogin'])->name('user.login');
-    Route::post('/logout', [UserController::class, 'userLogout'])->name('name.logout')->middleware('auth:sanctum');
+    Route::post('/logout', [UserController::class, 'userLogout'])->name('user.logout')->middleware('auth:sanctum');
+    Route::get('/referral_friend/{username}', [UserController::class, 'referralFriend'])->name('user.logout')->middleware('auth:sanctum');
 });
 
 // This is route for admin 

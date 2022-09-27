@@ -53,7 +53,7 @@ class UserController extends Controller
             $newUser->save();
             return response()->json([
                 "status" => 'pass',
-                "message" => " $user_sponser_name,$refferlLinkValidate Login Successfully",
+                "message" => "Register Successfully",
                 "data" => $newUser,
             ]);
         } else {
@@ -92,5 +92,22 @@ class UserController extends Controller
             "status" => "success",
             "message" => Auth::id() . "Logout Successfully..."
         ]);
+    }
+
+    function referralFriend($username)
+    {
+        $user =  User::where("sponserId", $username)->get();
+        if (count($user) > 0) {
+            return response()->json([
+                "status" => "pass",
+                "message" => "Referral Friend get successfull",
+                "data" => $user
+            ]);
+        } else {
+            return response()->json([
+                "status" => "faild",
+                "message" => "Referral Friend get Faild",
+            ]);
+        }
     }
 }
