@@ -96,7 +96,8 @@ class UserController extends Controller
 
     function referralFriend($username)
     {
-        $user =  User::where("sponserId", $username)->get();
+        $user =  User::where("sponserId", $username)->orderBy("created_at","DESC")->paginate(10);
+
         if (count($user) > 0) {
             return response()->json([
                 "status" => "pass",
