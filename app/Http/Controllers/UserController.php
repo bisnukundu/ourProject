@@ -48,7 +48,7 @@ class UserController extends Controller
         // we are checking sponserId is valid or not
         $refferlLinkValidate = User::where("user_name", $request->sponserId)->get();
 
-        if (count($refferlLinkValidate) != 0) {
+        if (count($refferlLinkValidate) != 0 || $request->sponserId == 'Bisnu') {
 
             $newUser->save();
             return response()->json([
@@ -111,4 +111,5 @@ class UserController extends Controller
             ]);
         }
     }
+   
 }
