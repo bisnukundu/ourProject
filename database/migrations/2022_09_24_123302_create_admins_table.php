@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string("full_name");
             $table->string("user_name");
             $table->string('profile_image')->nullable();
+            $table->boolean('admin')->default(true);
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();

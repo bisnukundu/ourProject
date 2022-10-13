@@ -2,12 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Helper\CustomHelper;
 use App\Models\Admin;
+use App\Models\User;
 use Hash;
 use Illuminate\Http\Request;
 
 class AdminController extends Controller
 {
+    use CustomHelper;
+
     function adminRegister(Request $request)
     {
 
@@ -37,15 +41,46 @@ class AdminController extends Controller
             "user_name" => "required",
             "password" => "required"
         ]);
-        $admin = Admin::where('user_name', $request->user_name)->firstOrFail();
+        $admin = Admin::where('user_name', $request->user_name)->first();
         if ($admin && Hash::check($request->password, $admin->password)) {
             $token = $admin->createToken('adminLogin');
-            return $token;
+            return [$token, $admin];
         } else {
             return response()->json([
                 "status" => "faild",
                 "message" => "Username or Password wrong..."
             ]);
         }
+    }
+
+    function getAllUser($username = '')
+    {
+        $users = User::orderBy("created_at", "DESC")->where('user_name', 'LIKE', "%" . $username . "%")->paginate(10);
+        return $this->returnResponse($users);
+    }
+
+    function activeUser($id)
+    {
+
+        $user = User::find($id);
+        $user->status = 1;
+        $user->save();
+        return $this->returnResponse([$user]);
+    }
+
+    function deactiveUser($id)
+    {
+
+        $user = User::find($id);
+        $user->status = 0;
+        $user->save();
+        return $this->returnResponse([$user]);
+    }
+
+    function deleteUser($id)
+    {
+        $user = User::find($id);
+        $user->delete();
+        return "Delete Successfuly";
     }
 }

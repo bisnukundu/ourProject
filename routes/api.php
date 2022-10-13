@@ -23,12 +23,12 @@ Route::middleware('auth:sanctum')->get('/test', function (Request $request) {
 
 
 
-// This route for users 
+// This route for users
 Route::prefix("user")->group(function () {
     Route::post('/register', [UserController::class, 'userRegister'])->name('user.register');
     Route::post('/login', [UserController::class, 'userLogin'])->name('user.login');
 
-    // Protected Route 
+    // Protected Route
     Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('/logout', [UserController::class, 'userLogout'])->name('user.logout');
         Route::get('/referral_friend/{username}', [UserController::class, 'referralFriend'])->name('user.logout');
@@ -36,8 +36,16 @@ Route::prefix("user")->group(function () {
     });
 });
 
-// This is route for admin 
+
+// This is route for admin
 Route::prefix("admin")->group(function () {
     Route::post('/register', [AdminController::class, 'adminRegister']);
     Route::post('/login', [AdminController::class, 'adminLogin']);
+
+    Route::middleware(['auth:admins'])->group(function () {
+        Route::get('all-user/{username?}', [AdminController::class, 'getAllUser']);
+        Route::put('active-user/{id}', [AdminController::class, 'activeUser']);
+        Route::put('deactive-user/{id}', [AdminController::class, 'deactiveUser']);
+        Route::delete('delete-user/{id}', [AdminController::class, 'deleteUser']);
+    });
 });

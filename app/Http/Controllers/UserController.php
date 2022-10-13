@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Helper\CustomHelper;
 use App\Models\User;
 use Auth;
 use Illuminate\Http\Request;
@@ -10,6 +11,7 @@ use Str;
 
 class UserController extends Controller
 {
+    use CustomHelper;
     function userRegister(Request $request)
     {
 
@@ -40,7 +42,7 @@ class UserController extends Controller
         $newUser->phone = $request->phone;
         $newUser->sponserId = $request->sponserId;
         $newUser->password = Hash::make($request->password);
-        // This is for server 
+        // This is for server
         // $newUser->referral_link = env('APP_URL') . "/user/register/?sopnser=" . strtolower($genarateName . random_int(0, 999));
         // This is for local testing
         $newUser->referral_link = "http://127.0.0.1:5173/user/register/?sopnser=" . $user_sponser_name;
@@ -48,7 +50,7 @@ class UserController extends Controller
         // we are checking sponserId is valid or not
         $refferlLinkValidate = User::where("user_name", $request->sponserId)->get();
 
-        if (count($refferlLinkValidate) != 0 || $request->sponserId == 'Bisnu') {
+        if (count($refferlLinkValidate) != 0 || $request->sponserId == 'bisnu') {
 
             $newUser->save();
             return response()->json([
@@ -96,20 +98,10 @@ class UserController extends Controller
 
     function referralFriend($username)
     {
-        $user =  User::where("sponserId", $username)->orderBy("created_at","DESC")->paginate(10);
+        $user =  User::where("sponserId", $username)->orderBy("created_at", "DESC")->paginate(10);
 
-        if (count($user) > 0) {
-            return response()->json([
-                "status" => "pass",
-                "message" => "Referral Friend get successfull",
-                "data" => $user
-            ]);
-        } else {
-            return response()->json([
-                "status" => "faild",
-                "message" => "Referral Friend get Faild",
-            ]);
-        }
+        return $this->returnResponse($user);
     }
-   
+
+
 }
