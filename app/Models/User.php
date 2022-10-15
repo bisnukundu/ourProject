@@ -42,4 +42,9 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'status' => 'boolean',
     ];
+
+    function balance()
+    {
+        return $this->hasOne(Balance::class, 'user_id');
+    }
 }

@@ -33,7 +33,10 @@ Route::prefix("user")->group(function () {
         Route::post('/logout', [UserController::class, 'userLogout'])->name('user.logout');
         Route::get('/referral_friend/{username}', [UserController::class, 'referralFriend'])->name('user.logout');
         Route::get('/level', [UserLevel::class, 'getLevel'])->name('user.level');
+        Route::get('/my-team', [UserLevel::class, 'getTeam']);
     });
+
+    Route::get("/balance", [UserController::class, 'balance']);
 });
 
 
