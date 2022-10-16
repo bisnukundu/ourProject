@@ -105,6 +105,6 @@ class UserController extends Controller
 
     function balance()
     {
-        return User::where('id', Auth::id())->balance();
+        return User::where('id', Auth::id())->with('balance')->get();
     }
 }

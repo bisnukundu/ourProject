@@ -23,6 +23,10 @@ return new class extends Migration
             $table->string("sponserId")->nullable();
             $table->string("referral_link")->nullable();
             $table->string('profile_image')->nullable();
+            $table->integer('active_balance')->default(0);
+            $table->integer('income_balance')->default(0);
+            $table->integer('bonus_balance')->default(0);
+            $table->integer('shoping_balance')->default(0);
             $table->boolean('isAgent')->default(false);
             $table->string('password');
             $table->timestamp('email_verified_at')->nullable();
