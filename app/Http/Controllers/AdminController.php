@@ -61,16 +61,40 @@ class AdminController extends Controller
 
     function activeUser($id)
     {
-
         $user = User::find($id);
-        $user->status = 1;
-        $user->save();
-        return $this->returnResponse([$user]);
+
+        if ($user->active_balance >= 250) {
+            $total = $user->active_balance + $user->income_balance;
+            if ($total >= 500) {
+                $user->status = 1;
+                $user->save();
+                return $this->returnResponse([$user]);
+            } else {
+                return response()->json([
+                    "status" => "faild",
+                    "message" => "আপনার পর্যাপ্ত পরিমান ব্যালেন্স নেই, অনুগ্রহ করে এডমিনের সাথে যোগাযোগ করুন।"
+                ]);
+            }
+        } else {
+            return response()->json([
+                "status" => "faild",
+                "message" => "আপনার পর্যাপ্ত পরিমান ব্যালেন্স নেই, অনুগ্রহ করে এডমিনের সাথে যোগাযোগ করুন।"
+            ]);
+        }
+    }
+
+    function sendActiveBalance($id)
+    {
+        $user = User::find($id);
+        if ($user) {
+            $user->active_balance = 250;
+            $user->save();
+            return $this->returnResponse([$user]);
+        };
     }
 
     function deactiveUser($id)
     {
-
         $user = User::find($id);
         $user->status = 0;
         $user->save();

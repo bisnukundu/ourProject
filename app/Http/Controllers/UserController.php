@@ -103,8 +103,8 @@ class UserController extends Controller
         return $this->returnResponse($user);
     }
 
-    function balance()
+    function getUserById($id = null)
     {
-        return User::where('id', Auth::id())->with('balance')->get();
+        return User::where('id', $id ?? Auth::id())->get();
     }
 }

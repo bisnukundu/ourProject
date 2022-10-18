@@ -18,14 +18,26 @@ class UserFactory extends Factory
      */
     public function definition()
     {
+        $full_name = fake()->name();
+        $username = explode(" ", $full_name);
+
+        $genarateName = '';
+        if (count($username) > 0) {
+            $genarateName .= $username[0];
+        }
+        if (count($username) > 1) {
+            $genarateName .= $username[1];
+        }
+        $user_sponser_name = strtolower($genarateName . random_int(0, 999));
         return [
-            'full_name' => fake()->name(),
-            'user_name' => fake()->unique()->name(),
+            'full_name' =>  $full_name,
+            'user_name' => $user_sponser_name,
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
             'remember_token' => Str::random(10),
-            'sponserId' => "bisnu13kundu213",
+            'sponserId' => "hafijulislam193",
+            'income_balance' => random_int(100, 500),
             'phone' => fake()->phoneNumber(),
         ];
     }
