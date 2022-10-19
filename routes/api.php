@@ -46,9 +46,10 @@ Route::prefix("admin")->group(function () {
 
     Route::middleware(['auth:admins'])->group(function () {
         Route::get('all-user/{username?}', [AdminController::class, 'getAllUser']);
-        Route::put('active-user/{id}', [AdminController::class, 'activeUser']);
-        Route::put('send-active-balance/{id}', [AdminController::class, 'sendActiveBalance']);
+        Route::put('send-active-balance', [AdminController::class, 'sendActiveBalance']);
         Route::put('deactive-user/{id}', [AdminController::class, 'deactiveUser']);
         Route::delete('delete-user/{id}', [AdminController::class, 'deleteUser']);
     });
+
+    Route::put('active-user/{id}', [AdminController::class, 'activeUser'])->middleware(['auth:sanctum']);
 });

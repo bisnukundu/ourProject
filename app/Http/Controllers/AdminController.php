@@ -67,6 +67,8 @@ class AdminController extends Controller
             $total = $user->active_balance + $user->income_balance;
             if ($total >= 500) {
                 $user->status = 1;
+                $user->active_balance = $user->active_balance - 250;
+                $user->income_balance = $user->income_balance - 250;
                 $user->save();
                 return $this->returnResponse([$user]);
             } else {
@@ -83,11 +85,15 @@ class AdminController extends Controller
         }
     }
 
-    function sendActiveBalance($id)
+    function sendActiveBalance(Request $request)
     {
-        $user = User::find($id);
+        $request->validate([
+            'balance' => 'required|integer',
+            'id' => 'required'
+        ]);
+        $user = User::find($request->id);
         if ($user) {
-            $user->active_balance = 250;
+            $user->active_balance = $user->active_balance + $request->balance;
             $user->save();
             return $this->returnResponse([$user]);
         };
