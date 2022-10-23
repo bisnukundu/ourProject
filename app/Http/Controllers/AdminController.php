@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Helper\CustomHelper;
 use App\Models\Admin;
 use App\Models\User;
+use Auth;
 use Hash;
 use Illuminate\Http\Request;
 
@@ -85,18 +86,70 @@ class AdminController extends Controller
         }
     }
 
-    function sendActiveBalance(Request $request)
+    function adminSendBalance(Request $request)
     {
         $request->validate([
             'balance' => 'required|integer',
-            'id' => 'required'
+            'id' => 'required',
+            'balance_type' => 'required'
         ]);
         $user = User::find($request->id);
-        if ($user) {
+
+        if ($request->balance_type == "active") {
             $user->active_balance = $user->active_balance + $request->balance;
             $user->save();
             return $this->returnResponse([$user]);
-        };
+        }
+        if ($request->balance_type == "income") {
+            $user->income_balance = $user->income_balance + $request->balance;
+            $user->save();
+            return $this->returnResponse([$user]);
+        }
+    }
+
+
+    function sendBalance(Request $request)
+    {
+        $request->validate([
+            'balance' => 'required|integer',
+            'id' => 'required',
+            'balance_type' => 'required'
+        ]);
+        $current_user = User::find(Auth::user()->id);
+
+        $user = User::find($request->id);
+        if ($request->balance_type == "active") {
+            if ($user && $current_user->active_balance >= $request->balance && $current_user->active_balance > 0 && $request->balance > 0) {
+                $user->active_balance = $user->active_balance + $request->balance;
+                $user->save();
+                $current_user->active_balance = $current_user->active_balance - $request->balance;
+                $current_user->save();
+                return $this->returnResponse([$user]);
+            } else {
+                return response()->json(
+                    [
+                        'status' => "faild",
+                        'message' => "আপনার কাছে পর্যাপ্ত পরিমান টাকা নেই"
+                    ]
+                );
+            }
+        }
+        if ($request->balance_type == "income") {
+            if ($user && $current_user->income_balance >= $request->balance && $current_user->income_balance > 0 && $request->balance > 0) {
+                $user->income_balance = $user->income_balance + $request->balance;
+                $user->save();
+                $current_user->income_balance = $current_user->income_balance - $request->balance;
+                $current_user->save();
+                return $this->returnResponse([$user]);
+            } else {
+                return response()->json(
+                    [
+                        'status' => "faild",
+                        'message' => "আপনার কাছে পর্যাপ্ত পরিমান টাকা নেই"
+                    ]
+                );
+            }
+        }
     }
 
     function deactiveUser($id)

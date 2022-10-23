@@ -107,4 +107,9 @@ class UserController extends Controller
     {
         return User::where('id', $id ?? Auth::id())->get();
     }
+
+    function getUserByName($username = null)
+    {
+        return User::where('user_name', $username)->get();
+    }
 }

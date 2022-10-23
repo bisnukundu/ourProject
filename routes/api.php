@@ -35,6 +35,7 @@ Route::prefix("user")->group(function () {
         Route::get('/level', [UserLevel::class, 'getLevel'])->name('user.level');
         Route::get('/my-team', [UserLevel::class, 'getTeam']);
         Route::get("/user/{id?}", [UserController::class, 'getUserById']);
+        Route::get("/username/{username?}", [UserController::class, 'getUserByName']);
     });
 });
 
@@ -45,11 +46,14 @@ Route::prefix("admin")->group(function () {
     Route::post('/login', [AdminController::class, 'adminLogin']);
 
     Route::middleware(['auth:admins'])->group(function () {
-        Route::get('all-user/{username?}', [AdminController::class, 'getAllUser']);
-        Route::put('send-active-balance', [AdminController::class, 'sendActiveBalance']);
-        Route::put('deactive-user/{id}', [AdminController::class, 'deactiveUser']);
+        Route::put('/deactive-user/{id}', [AdminController::class, 'deactiveUser']);
         Route::delete('delete-user/{id}', [AdminController::class, 'deleteUser']);
+        Route::get('/all-user/{username?}', [AdminController::class, 'getAllUser']);
+        Route::put('/admin-send-balance', [AdminController::class, 'adminSendBalance']);
     });
 
-    Route::put('active-user/{id}', [AdminController::class, 'activeUser'])->middleware(['auth:sanctum']);
+    Route::middleware(['auth:sanctum'])->group(function () {
+        Route::put('/send-balance', [AdminController::class, 'sendBalance']);
+        Route::put('/active-user/{id}', [AdminController::class, 'activeUser']);
+    });
 });
