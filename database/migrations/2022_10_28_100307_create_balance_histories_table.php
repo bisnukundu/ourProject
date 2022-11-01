@@ -13,11 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('balances', function (Blueprint $table) {
+        Schema::create('balance_histories', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained();
-            $table->integer("account_active_balance")->default(0);
-            $table->integer("income_balance")->default(0);
+            $table->string('from_user_name');
+            $table->string('to_user_name');
+            $table->integer("amount")->nullable();
+            $table->string("status", 10)->default("send");  // Send or Receive
             $table->timestamps();
         });
     }
@@ -29,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('balances');
+        Schema::dropIfExists('balance_histories');
     }
 };

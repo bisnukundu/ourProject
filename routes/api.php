@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\BalanceHistoryController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserLevel;
 use Illuminate\Http\Request;
@@ -36,6 +37,7 @@ Route::prefix("user")->group(function () {
         Route::get('/my-team', [UserLevel::class, 'getTeam']);
         Route::get("/user/{id?}", [UserController::class, 'getUserById']);
         Route::get("/username/{username?}", [UserController::class, 'getUserByName']);
+        Route::get('/balance-history', [AdminController::class, 'balanceHistory']);
     });
 });
 

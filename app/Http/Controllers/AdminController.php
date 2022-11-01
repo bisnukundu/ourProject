@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Helper\CustomHelper;
 use App\Models\Admin;
+use App\Models\BalanceHistory;
 use App\Models\User;
 use Auth;
 use Hash;
@@ -119,11 +120,17 @@ class AdminController extends Controller
 
         $user = User::find($request->id);
         if ($request->balance_type == "active") {
-            if ($user && $current_user->active_balance >= $request->balance && $current_user->active_balance > 0 && $request->balance > 0) {
+            if ($current_user->id != $request->id && $user && $current_user->active_balance >= $request->balance && $current_user->active_balance > 0 && $request->balance > 0) {
                 $user->active_balance = $user->active_balance + $request->balance;
                 $user->save();
                 $current_user->active_balance = $current_user->active_balance - $request->balance;
                 $current_user->save();
+                BalanceHistory::create([
+                    "from_user_name" => $current_user->user_name,
+                    "to_user_name" => $user->user_name,
+                    "amount" => $request->balance,
+                    "status" => "active"
+                ]);
                 return $this->returnResponse([$user]);
             } else {
                 return response()->json(
@@ -135,11 +142,17 @@ class AdminController extends Controller
             }
         }
         if ($request->balance_type == "income") {
-            if ($user && $current_user->income_balance >= $request->balance && $current_user->income_balance > 0 && $request->balance > 0) {
+            if ($current_user->id != $request->id && $user && $current_user->income_balance >= $request->balance && $current_user->income_balance > 0 && $request->balance > 0) {
                 $user->income_balance = $user->income_balance + $request->balance;
                 $user->save();
                 $current_user->income_balance = $current_user->income_balance - $request->balance;
                 $current_user->save();
+                BalanceHistory::create([
+                    "from_user_name" => $current_user->user_name,
+                    "to_user_name" => $user->user_name,
+                    "amount" => $request->balance,
+                    "status" => "income"
+                ]);
                 return $this->returnResponse([$user]);
             } else {
                 return response()->json(
@@ -150,6 +163,14 @@ class AdminController extends Controller
                 );
             }
         }
+    }
+
+    function balanceHistory()
+    {
+        $current_user = Auth::user();
+        $history =  BalanceHistory::orderBy("created_at", "DESC")->where('from_user_name', $current_user->user_name)->orWhere('to_user_name', $current_user->user_name)->paginate(10);
+
+        return $this->returnResponse($history);
     }
 
     function deactiveUser($id)

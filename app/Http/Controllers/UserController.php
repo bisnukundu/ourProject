@@ -21,7 +21,6 @@ class UserController extends Controller
             "user_name" => 'unique:users',
             'phone' => 'required',
             "password" => 'required|min:6|confirmed',
-            "sponserId" => 'required',
         ]);
 
         $newUser = new User();
@@ -40,17 +39,14 @@ class UserController extends Controller
         $newUser->user_name = $user_sponser_name;
         $newUser->email = $request->email;
         $newUser->phone = $request->phone;
-        $newUser->sponserId = $request->sponserId;
+        $newUser->sponserId = $request->sponserId ?? '';
         $newUser->password = Hash::make($request->password);
-        // This is for server
-        // $newUser->referral_link = env('APP_URL') . "/user/register/?sopnser=" . strtolower($genarateName . random_int(0, 999));
-        // This is for local testing
-        $newUser->referral_link = "http://127.0.0.1:5173/user/register/?sopnser=" . $user_sponser_name;
+
 
         // we are checking sponserId is valid or not
         $refferlLinkValidate = User::where("user_name", $request->sponserId)->get();
 
-        if (count($refferlLinkValidate) != 0 || $request->sponserId == 'bisnu') {
+        if (count($refferlLinkValidate) != 0 || $request->sponserId == 'bisnu' || $request->sponserId == '') {
 
             $newUser->save();
             return response()->json([
